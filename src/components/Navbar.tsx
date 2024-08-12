@@ -20,7 +20,8 @@ const Navbar = () => {
         {/* LEFT */}
         <div className="w-1/3 xl:w-1/2 flex items-center gap-12">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.webp" alt="logo" width={60} height={60} />
+            <div className="text-2xl tracking-wide">Starview</div>
+            <Image src="/logo.webp" alt="logo" width={40} height={40} />
           </Link>
           <div className="hidden xl:flex gap-4">
             <Link href="/">Inicio</Link>
