@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localfont from "next/font/local";
 
+import { WixClientContextProvider } from "@/context/wixContext";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -21,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={starviewFont.className}>
-        <Navbar />
-        {children}
-        <Footer />
+        <WixClientContextProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </WixClientContextProvider>
       </body>
     </html>
   );
