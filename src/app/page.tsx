@@ -1,8 +1,16 @@
+import { wixClientServer } from "@/lib/wixClientServer";
+
 import CategoryList from "@/components/CategoryList";
 import ProductList from "@/components/ProductList";
 import Slider from "@/components/Slider";
 
-const HomePage = () => {
+const HomePage = async () => {
+  //  const wixClient = await wixClientServer();
+
+  //  const res = await wixClient.products.queryProducts().find();
+
+  // console.log(res);
+
   return (
     <div className="">
       <Slider />
