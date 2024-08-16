@@ -2,17 +2,25 @@
 
 import { useState } from "react";
 
-const Add = () => {
+const Add = ({
+  productId,
+  variantId,
+  stockNumber,
+}: {
+  productId: string;
+  variantId: string;
+  stockNumber: number;
+}) => {
   const [quantity, setQuantity] = useState(1);
 
   // TEMPORARY
-  const stock = 4;
+  // const stock = 4;
 
   const handleQuantity = (type: "i" | "d") => {
     if (type === "d" && quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
-    if (type === "i" && quantity < stock) {
+    if (type === "i" && quantity < stockNumber) {
       setQuantity((prev) => prev + 1);
     }
   };
@@ -38,8 +46,9 @@ const Add = () => {
             </button>
           </div>
           <div className="text-xs">
-            Ultimos <span className="text-orange-500">4 productos</span>! <br />{" "}
-            No te lo pierdas
+            Ultimos{" "}
+            <span className="text-orange-500">{stockNumber} productos</span>!{" "}
+            <br /> No te lo pierdas
           </div>
         </div>
         <button className="w-36 text-sm rounded-3xl ring-1 ring-starview text-starview py-2 px-4 hover:bg-starview hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white disabled:ring-none">
