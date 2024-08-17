@@ -1,6 +1,6 @@
 # Starview Store
 
-Página web ecommerce de remeras
+Página web ecommerce de la marca Starview
 
 ## Stack
 
