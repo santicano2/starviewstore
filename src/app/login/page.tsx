@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
+import { LoginState } from "@wix/sdk";
 import { useWixClient } from "@/hooks/useWixClient";
 
 enum MODE {
@@ -21,6 +24,8 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  const router = useRouter();
 
   const formTitle =
     mode === MODE.LOGIN
@@ -42,9 +47,71 @@ const LoginPage = () => {
 
   const wixClient = useWixClient();
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      let response;
+
+      switch (mode) {
+        case MODE.LOGIN:
+          response = await wixClient.auth.login({
+            email,
+            password,
+          });
+          break;
+        case MODE.REGISTER:
+          response = await wixClient.auth.register({
+            email,
+            password,
+            profile: { nickname: username },
+          });
+          break;
+        case MODE.RESET_PASSWORD:
+          response = await wixClient.auth.sendPasswordResetEmail(
+            email,
+            window.location.href
+          );
+          break;
+        case MODE.EMAIL_VERIFICATION:
+          response = await wixClient.auth.processVerification({
+            verificationCode: emailCode,
+          });
+          break;
+        default:
+          break;
+      }
+
+      switch (response?.loginState) {
+        case LoginState.SUCCESS:
+          setMessage("Login exitoso, redireccionando...");
+          const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
+            response.data.sessionToken!
+          );
+
+          Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
+            expires: 2,
+          });
+          wixClient.auth.setTokens(tokens);
+          router.push("/");
+
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log(error);
+      setError("Algo salio mal");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="h-[calc(100vh-80px)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
-      <form className="flex flex-col gap-8">
+      <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
         <h1 className="text-2xl font-semibold">{formTitle}</h1>
         {mode === MODE.REGISTER ? (
           <div className="flex flex-col gap-2">
@@ -56,6 +123,7 @@ const LoginPage = () => {
               name="username"
               placeholder="starview"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              onChange={(e) => setUsername(e.target.value)}
             />
           </div>
         ) : null}
@@ -69,6 +137,7 @@ const LoginPage = () => {
               name="email"
               placeholder="starview@email.com"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
         ) : (
@@ -81,6 +150,7 @@ const LoginPage = () => {
               name="emailCode"
               placeholder="Código"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              onChange={(e) => setEmailCode(e.target.value)}
             />
           </div>
         )}
@@ -94,6 +164,7 @@ const LoginPage = () => {
               name="password"
               placeholder="tu contraseña"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
         ) : null}
