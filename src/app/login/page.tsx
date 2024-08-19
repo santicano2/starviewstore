@@ -79,6 +79,7 @@ const LoginPage = () => {
             email,
             window.location.href
           );
+          setMessage("Se envio un correo para restablecer tu contraseña");
           break;
         case MODE.EMAIL_VERIFICATION:
           response = await wixClient.auth.processVerification({
@@ -101,7 +102,26 @@ const LoginPage = () => {
           });
           wixClient.auth.setTokens(tokens);
           router.push("/");
-
+          break;
+        case LoginState.FAILURE:
+          if (
+            response.errorCode === "invalidEmail" ||
+            response.errorCode === "invalidPassword"
+          ) {
+            setError("Email o contraseña incorrectos");
+          } else if (response.errorCode === "emailAlreadyExists") {
+            setError("El correo electronico ya esta en uso");
+          } else if (response.errorCode === "resetPassword") {
+            setError("Restablece tu contraseña");
+          } else {
+            setError("Algo salio mal");
+          }
+          break;
+        case LoginState.EMAIL_VERIFICATION_REQUIRED:
+          setMode(MODE.EMAIL_VERIFICATION);
+          break;
+        case LoginState.OWNER_APPROVAL_REQUIRED:
+          setMessage("Cuenta pendiente de aprobación");
           break;
         default:
           break;
