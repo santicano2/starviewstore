@@ -11,5 +11,5 @@ Página web ecommerce de la marca Starview
 
 ## TODO:
 
-- Elegir opciones del producto para poder agregar al carrito
-- Mostrar esas opciones en el carrito
+- Elegir opciones del producto para poder agregar al carrito.
+- Mostrar esas opciones en el carrito.
